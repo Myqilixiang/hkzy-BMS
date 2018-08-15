@@ -1,6 +1,6 @@
 <template>
   <div class="refund">
-    <h1>Study card redis缓存配置</h1>
+    <h1>测试列表</h1>
     <hr>
     <el-row>
       <el-card>

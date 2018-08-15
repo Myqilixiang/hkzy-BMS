@@ -1,6 +1,6 @@
 <template>
   <div class="refund">
-    <h1>规则列表</h1>
+    <h1>测试列表</h1>
     <hr>
     <el-row>
       <el-card>

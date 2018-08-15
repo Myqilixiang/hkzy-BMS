@@ -4,7 +4,7 @@
              shadow="always">
       <div class="clearfix title"
            slot="header">
-        <h3>knowbox backend manage system</h3>
+        <h3>惠康智赢处方审核平台</h3>
       </div>
       <div class="clearfix">
         <el-form autoComplete="on"
