@@ -1,5 +1,14 @@
 import request from '@/utils/request'
 class AccessService {
+  getHospitalsNum(query) {
+    return request({
+      url: '/Hospitals/count',
+      method: 'get',
+      params: {
+        where: JSON.stringify(query)
+      }
+    })
+  }
   getHospitalsList(query) {
     return request({
       url: '/Hospitals',

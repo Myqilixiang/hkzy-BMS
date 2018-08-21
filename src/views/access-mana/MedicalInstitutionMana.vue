@@ -1,7 +1,5 @@
 <template>
-  <div class="refund">
-    <h1>测试列表</h1>
-    <hr>
+  <div class="medical">
     <el-row>
       <el-card>
         <div class="clearfix"
@@ -9,32 +7,17 @@
           <el-col :span="24">
             <el-form :inline="true"
                      size="small"
-                     :model="conditionData"
-                     class="demo-form-inline">
-              <el-form-item>
-                <el-input v-model="conditionData.number"
-                          placeholder="手机号|订单号"></el-input>
+                     :model="conditionData">
+              <el-form-item label="机构代码">
+                <el-input v-model="conditionData.id"></el-input>
               </el-form-item>
-              <el-form-item>
-                <el-select v-model="conditionData.type"
-                           placeholder="请选择">
-                  <el-option v-for="item in conditionData.options"
-                             :key="item.value"
-                             :label="item.label"
-                             :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item>
-                <el-radio v-model="conditionData.end"
-                          label="student">学生端</el-radio>
-                <el-radio v-model="conditionData.end"
-                          label="parent">家长端</el-radio>
-              </el-form-item>
-
               <el-form-item>
                 <el-button type="primary"
                            @click="onSubmit">查询</el-button>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="success"
+                           @click="onSubmit">新增医疗机构</el-button>
               </el-form-item>
             </el-form>
           </el-col>
@@ -45,32 +28,83 @@
                     stripe
                     border
                     style="width: 100%">
-            <el-table-column prop="date"
-                             label="订单ID">
+            <el-table-column label="机构类型"
+                             align="center">
+              <template slot-scope="scope">
+                <span v-if="scope.row.type==1">区域审方中心</span>
+                <span v-if="scope.row.type==11">公立医院</span>
+                <span v-if="scope.row.type==12">私立医院</span>
+                <span v-if="scope.row.type==13">互联网医院</span>
+                <span v-if="scope.row.type==21">药房</span>
+              </template>
             </el-table-column>
             <el-table-column prop="name"
-                             label="用户名称">
+                             align="center"
+                             label="名称">
             </el-table-column>
-            <el-table-column prop="address"
-                             label="手机号">
+            <el-table-column prop="code"
+                             label="组织结构代码"
+                             align="center">
             </el-table-column>
-            <el-table-column prop="address"
-                             label="商品名">
+            <el-table-column label="医疗机构评级"
+                             align="center">
+              <template slot-scope="scope">
+                <span v-if="scope.row.level==1">区域审方中心</span>
+                <span v-if="scope.row.level==11">丙</span>
+                <span v-if="scope.row.level==12">乙</span>
+                <span v-if="scope.row.level==13">甲</span>
+                <span v-if="scope.row.level==21">二丙</span>
+                <span v-if="scope.row.level==22">二乙</span>
+                <span v-if="scope.row.level==23">二甲</span>
+                <span v-if="scope.row.level==31">三丙</span>
+                <span v-if="scope.row.level==32">三乙</span>
+                <span v-if="scope.row.level==33">三甲</span>
+                <span v-if="scope.row.level==1">一星</span>
+                <span v-if="scope.row.level==2">两星</span>
+                <span v-if="scope.row.level==3">三星</span>
+                <span v-if="scope.row.level==4">四星</span>
+                <span v-if="scope.row.level==5">五星</span>
+              </template>
             </el-table-column>
-            <el-table-column prop="address"
-                             label="商品原价">
+            <el-table-column label="合作方式"
+                             align="center">
+              <template slot-scope="scope">
+                <span v-if="scope.row.cooperation_mode==1">默认</span>
+              </template>
             </el-table-column>
-            <el-table-column prop="address"
-                             label="购买金额">
+            <el-table-column prop="expire_time"
+                             align="center"
+                             label="服务终止时间">
             </el-table-column>
-            <el-table-column prop="address"
-                             label="支付渠道">
-            </el-table-column>
-            <el-table-column prop="address"
+            <el-table-column prop="created_at"
+                             align="center"
                              label="创建时间">
             </el-table-column>
-            <el-table-column prop="address"
-                             label="操作">
+            <el-table-column prop="updated_at"
+                             align="center"
+                             label="更新时间">
+            </el-table-column>
+            <el-table-column label="作废标记"
+                             align="center">
+              <template slot-scope="scope">
+                <span v-if="scope.row.obsoleted">作废</span>
+                <span v-else>未作废</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" align="center"
+                             width="150px">
+              <template slot-scope="scope">
+                <el-button type="warning"
+                           @click="editHosp(scope.row)"
+                           size="small">
+                  编辑
+                </el-button>
+                <el-button type="danger"
+                           @click="deleteHosp(scope.row)"
+                           size="small">
+                  删除
+                </el-button>
+              </template>
             </el-table-column>
           </el-table>
         </el-col>
@@ -94,78 +128,54 @@
 </template>
 
 <script>
+import { AccessService } from '@/api'
+
 export default {
   data() {
     return {
       conditionData: {
-        number: '',
-        type: '',
-        end: '',
-        options: [
-          { value: 'tel', label: '手机号' },
-          { value: 'order', label: '订单号' }
-        ]
+        id: ''
       },
       total: 0,
       listQuery: {
         page: 1,
         limit: 5
       },
-      list: [],
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      list: []
     }
   },
   mounted() {
-    this.total = this.tableData.length
-    this.getList()
+    AccessService.getHospitalsNum({}).then(data => {
+      this.total = data.data.count
+      AccessService.getHospitalsList(
+        {
+          limit: this.listQuery.limit,
+          skip: this.listQuery.limit * (this.listQuery.page - 1)
+        }).then(data => {
+        this.list = data.data
+      })
+    })
   },
   methods: {
+    deleteHosp() { },
+    editHosp() { },
     getList() {
-      this.list = this.tableData.slice((this.listQuery.page - 1) * this.listQuery.limit, (this.listQuery.page - 1) * this.listQuery.limit + this.listQuery.limit)
+      AccessService.getPersonNumOfSelectedDepartments({
+        hosp_id: this.selectedDepartment.hosp_id,
+        dept_code: this.selectedDepartment.dept_code
+      }).then(data => {
+        this.total = data.data.count
+        AccessService.getPersonOfSelectedDepartments({
+          where: {
+            hosp_id: this.selectedDepartment.hosp_id,
+            dept_code: this.selectedDepartment.dept_code
+          },
+          limit: this.listQuery.limit,
+          skip: this.listQuery.limit * (this.listQuery.page - 1)
+        }).then(data => {
+          this.list = data.data
+        })
+      })
     },
     onSubmit() {
 
@@ -183,7 +193,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.refund {
+.medical {
   padding: 20px 20px;
   /deep/ .el-form-item {
     margin-bottom: 0;

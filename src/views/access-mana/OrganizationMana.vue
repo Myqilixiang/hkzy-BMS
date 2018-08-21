@@ -1,7 +1,5 @@
 <template>
   <div class="refund">
-    <h1>测试</h1>
-    <hr>
     <el-row>
       <el-col :span="5">
         <el-tree :load="loadDepartment"
@@ -121,11 +119,11 @@ export default {
       selectedDepartment: ''
     }
   },
-  // mounted() {
-  //   AccessService.getHospitalsList({}).then(data => {
-  //     this.treeData = data.data
-  //   })
-  // },
+  mounted() {
+    AccessService.getHospitalsList({}).then(data => {
+      this.treeData = data.data
+    })
+  },
   methods: {
     getList() {
       AccessService.getPersonNumOfSelectedDepartments({
