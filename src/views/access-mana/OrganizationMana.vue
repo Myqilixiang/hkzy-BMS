@@ -17,18 +17,18 @@
                        size="small"
                        :model="conditionData"
                        class="demo-form-inline">
-                <el-form-item label="退款ID">
+                <el-form-item label="ID">
                   <el-input v-model="conditionData.refundId"></el-input>
                 </el-form-item>
-                <el-form-item lable="用户手机号">
+                <!-- <el-form-item lable="手机号">
                   <el-input v-model="conditionData.telNum"></el-input>
-                </el-form-item>
-                <el-form-item>
+                </el-form-item> -->
+                <!-- <el-form-item>
                   <el-radio v-model="conditionData.end"
                             label="student">学生端</el-radio>
                   <el-radio v-model="conditionData.end"
                             label="parent">家长端</el-radio>
-                </el-form-item>
+                </el-form-item> -->
 
                 <el-form-item>
                   <el-button type="primary"

@@ -129,7 +129,7 @@ export const asyncRouterMap = [{
     path: 'user-mana',
     name: 'UserMana',
     component: () =>
-          import('@/views/basic-mana/UserMana'),
+          import('@/views/basic-mana/user-mana/index'),
     meta: {
       title: '平台用户管理',
       icon: 'sider-user'
@@ -139,7 +139,7 @@ export const asyncRouterMap = [{
     path: 'role-mana',
     name: 'RoleMana',
     component: () =>
-          import('@/views/basic-mana/RoleMana'),
+          import('@/views/basic-mana/role-mana'),
     meta: {
       title: '平台角色管理',
       icon: 'sider-role'
