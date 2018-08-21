@@ -1,13 +1,47 @@
 import request from '@/utils/request'
 class AccessService {
-  login(username, password) {
-    // TODO : anshizhushi
+  getHospitalsList(query) {
     return request({
-      url: '/user/login',
-      method: 'post',
-      data: {
-        username,
-        password
+      url: '/Hospitals',
+      method: 'get',
+      params: {
+        filter: JSON.stringify(query)
+      }
+    })
+  }
+  getDepartmentsOfSelectedHospital(query) {
+    return request({
+      url: '/Departments',
+      method: 'get',
+      params: {
+        filter: JSON.stringify(query)
+      }
+    })
+  }
+  getChildrenOfSelectedDepartment(query) {
+    return request({
+      url: '/Departments',
+      method: 'get',
+      params: {
+        filter: JSON.stringify(query)
+      }
+    })
+  }
+  getPersonOfSelectedDepartments(query) {
+    return request({
+      url: `/Persons`,
+      method: 'get',
+      params: {
+        filter: JSON.stringify(query)
+      }
+    })
+  }
+  getPersonNumOfSelectedDepartments(query) {
+    return request({
+      url: `/Persons/count`,
+      method: 'get',
+      params: {
+        where: JSON.stringify(query)
       }
     })
   }
