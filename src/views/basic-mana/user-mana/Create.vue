@@ -64,7 +64,7 @@ export default {
         'updated_by': 'string',
         'obsoleted': false,
         'sort_value': 1,
-        'hosp_id': 'string'
+        'hosp_id': ''
       }
     }
   },

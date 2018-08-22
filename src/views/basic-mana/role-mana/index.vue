@@ -1,5 +1,5 @@
 <template>
-  <div class="user">
+  <div class="role">
     <el-row>
       <el-card class="card">
         <div class="clearfix"
@@ -14,7 +14,7 @@
                 <el-input v-model="conditionData.username"
                           clearable
                           @clear="getList"
-                          placeholder="请输入账号名 "></el-input>
+                          placeholder="请输入角色名"></el-input>
               </el-form-item>
               <el-form-item>
                 <el-button type="primary"
@@ -36,37 +36,30 @@
                       style="width: 100%">
               <el-table-column prop="name"
                                align="center"
-                               label="账号名">
+                               label="角色名">
               </el-table-column>
-              <el-table-column prop="telephone"
+              <el-table-column prop="role_code"
                                align="center"
-                               label="电话">
+                               label="角色代码">
               </el-table-column>
-              <el-table-column align="center"
-                               width="100"
-                               label="账号状态">
-                <template slot-scope="scope">
-                  <el-tag type="success"
-                          v-if="scope.row.status==1">正常</el-tag>
-                  <el-tag type="danger"
-                          v-else>异常</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column prop="email"
-                               align="center"
-                               label="邮箱">
-              </el-table-column>
-              <el-table-column prop="person_id"
+              <el-table-column prop="id"
                                align="center"
                                label="ID">
               </el-table-column>
-              <el-table-column prop="hosp_id"
+              <el-table-column prop="created_at"
                                align="center"
-                               label="医疗机构ID">
+                               label="创建时间">
+              </el-table-column>
+              <el-table-column label="作废标记"
+                               align="center">
+                <template slot-scope="scope">
+                  <span v-if="scope.row.obsoleted">作废</span>
+                  <span v-else>未作废</span>
+                </template>
               </el-table-column>
               <el-table-column align="center"
                                width="160"
-                               label="角色">
+                               label="权限">
                 <template slot-scope="scope">
                   <el-button type="primary"
                              @click="showRoleDialog(scope.row)"
@@ -109,16 +102,17 @@
         </div>
       </el-card>
     </el-row>
-    <EditDialog :user="selectedUser"
+    <EditDialog :role="selectedUser"
                 @closedialog="closeEditDialog"
                 v-if="editDialogVisable"></EditDialog>
 
     <CreateDialog @closedialog="closeCreateDialog"
                   v-if="createDialogVisable">
     </CreateDialog>
-    <CreateDialog @closedialog="closeRoleDialog" :user="selectedUser"
-                  v-if="roleDialogVisable">
-    </CreateDialog>
+    <AuthDialog @closedialog="closeRoleDialog"
+                :role="selectedUser"
+                v-if="roleDialogVisable">
+    </AuthDialog>
   </div>
 </template>
 
@@ -126,10 +120,10 @@
 import { BasicService } from '@/api'
 import EditDialog from './Edit'
 import CreateDialog from './Create'
-import RoleDialog from './RoleAuth'
+import AuthDialog from './RoleAuth'
 export default {
   components: {
-    EditDialog, CreateDialog, RoleDialog
+    EditDialog, CreateDialog, AuthDialog
   },
   data() {
     return {
@@ -168,12 +162,12 @@ export default {
         })
       })
     },
-    showEditDialog(user) {
-      this.selectedUser = user
+    showEditDialog(role) {
+      this.selectedUser = role
       this.editDialogVisable = true
     },
-    showRoleDialog(user) {
-      this.selectedUser = user
+    showRoleDialog(role) {
+      this.selectedUser = role
       this.roleDialogVisable = true
     },
     handleSizeChange(val) {
@@ -227,7 +221,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.user {
+.role {
   padding: 20px 20px;
   .card /deep/ .el-form-item {
     margin-bottom: 0;

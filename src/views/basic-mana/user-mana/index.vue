@@ -116,9 +116,9 @@
     <CreateDialog @closedialog="closeCreateDialog"
                   v-if="createDialogVisable">
     </CreateDialog>
-    <CreateDialog @closedialog="closeRoleDialog" :user="selectedUser"
+    <RoleDialog @closedialog="closeRoleDialog" :user="selectedUser"
                   v-if="roleDialogVisable">
-    </CreateDialog>
+    </RoleDialog>
   </div>
 </template>
 

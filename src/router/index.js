@@ -146,19 +146,19 @@ export const asyncRouterMap = [{
     }
   },
   {
-    path: 'feature-mana',
-    name: 'FeatureMana',
+    path: 'module-mana',
+    name: 'ModuleMana',
     component: () =>
-          import('@/views/basic-mana/FeatureMana'),
+          import('@/views/basic-mana/module-mana/index'),
     meta: {
       title: '模块功能管理',
-      icon: 'sider-feature'
+      icon: 'sider-module'
     }
   }, {
     path: 'auth-mana',
     name: 'AuthMana',
     component: () =>
-          import('@/views/basic-mana/AuthMana'),
+          import('@/views/basic-mana/auth-mana/index'),
     meta: {
       title: '角色权限管理',
       icon: 'sider-auth'
