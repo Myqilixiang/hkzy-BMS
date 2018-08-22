@@ -9,7 +9,7 @@ class BasicService {
    */
   getNumOfUsers(query) {
     return request({
-      url: '/Persons/count',
+      url: '/SysUser/count',
       method: 'get',
       params: {
         where: JSON.stringify(query)
@@ -18,7 +18,7 @@ class BasicService {
   }
   getUserList(query) {
     return request({
-      url: '/Persons',
+      url: '/SysUser',
       method: 'get',
       params: {
         filter: JSON.stringify(query)
@@ -27,20 +27,20 @@ class BasicService {
   }
   deleteUser(id) {
     return request({
-      url: `/Persons/${id}`,
+      url: `/SysUser/${id}`,
       method: 'delete'
     })
   }
   createUser(userInfo) {
     return request({
-      url: `/Persons`,
+      url: `/SysUser`,
       method: 'post',
       data: userInfo
     })
   }
   updateUser(userInfo) {
     return request({
-      url: `/Persons`,
+      url: `/SysUser`,
       method: 'put',
       data: userInfo
     })

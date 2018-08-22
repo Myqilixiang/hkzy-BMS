@@ -116,9 +116,6 @@
     <CreateDialog @closedialog="closeCreateDialog"
                   v-if="createDialogVisable">
     </CreateDialog>
-    <CreateDialog @closedialog="closeRoleDialog" :user="selectedUser"
-                  v-if="roleDialogVisable">
-    </CreateDialog>
   </div>
 </template>
 
@@ -126,16 +123,14 @@
 import { BasicService } from '@/api'
 import EditDialog from './Edit'
 import CreateDialog from './Create'
-import RoleDialog from './UserRole'
 export default {
   components: {
-    EditDialog, CreateDialog, RoleDialog
+    EditDialog, CreateDialog
   },
   data() {
     return {
       createDialogVisable: false,
       editDialogVisable: false,
-      roleDialogVisable: false,
       conditionData: {
         username: ''
       },
@@ -172,10 +167,6 @@ export default {
       this.selectedUser = user
       this.editDialogVisable = true
     },
-    showRoleDialog(user) {
-      this.selectedUser = user
-      this.roleDialogVisable = true
-    },
     handleSizeChange(val) {
       this.listQuery.limit = val
       this.getList()
@@ -198,9 +189,6 @@ export default {
         this.getList()
       }
       this.editDialogVisable = false
-    },
-    closeRoleDialog() {
-      this.roleDialogVisable = false
     },
     delUser(userid, username) {
       this.$confirm(`确认删除${username}吗?`, '提示', {

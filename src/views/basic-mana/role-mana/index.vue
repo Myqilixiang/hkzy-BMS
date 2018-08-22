@@ -1,7 +1,7 @@
 <template>
   <div class="user">
     <el-row>
-      <el-card>
+      <el-card class="card">
         <div class="clearfix"
              slot="header">
           <el-col :span="24">
@@ -12,11 +12,13 @@
                      class="demo-form-inline">
               <el-form-item>
                 <el-input v-model="conditionData.username"
-                          placeholder="请输入用户名"></el-input>
+                          clearable
+                          @clear="getList"
+                          placeholder="请输入账号名 "></el-input>
               </el-form-item>
               <el-form-item>
                 <el-button type="primary"
-                           @click="search">查询</el-button>
+                           @click="getList">查询</el-button>
               </el-form-item>
               <el-form-item>
                 <el-button type="success"
@@ -32,49 +34,45 @@
                       stripe
                       border
                       style="width: 100%">
-              <el-table-column prop="job_code"
-                               align="center"
-                               label="工号">
-              </el-table-column>
               <el-table-column prop="name"
                                align="center"
-                               label="姓名">
+                               label="账号名">
+              </el-table-column>
+              <el-table-column prop="telephone"
+                               align="center"
+                               label="电话">
               </el-table-column>
               <el-table-column align="center"
-                               label="人员类型">
+                               width="100"
+                               label="账号状态">
                 <template slot-scope="scope">
-                  <span v-if="scope.row.type==0">其他</span>
-                  <span v-if="scope.row.type==1">药师</span>
-                  <span v-if="scope.row.type==2">医师</span>
-                  <span v-if="scope.row.type==3">护士</span>
+                  <el-tag type="success"
+                          v-if="scope.row.status==1">正常</el-tag>
+                  <el-tag type="danger"
+                          v-else>异常</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="id_card"
+              <el-table-column prop="email"
                                align="center"
-                               label="身份证号">
+                               label="邮箱">
               </el-table-column>
-              <el-table-column prop="level"
+              <el-table-column prop="person_id"
                                align="center"
-                               label="级别">
+                               label="ID">
               </el-table-column>
-              <el-table-column prop="title"
+              <el-table-column prop="hosp_id"
                                align="center"
-                               label="职务">
+                               label="医疗机构ID">
               </el-table-column>
-              <el-table-column prop="dept_code"
-                               align="center"
-                               label="科室代码">
-              </el-table-column>
-              <el-table-column prop="created_at"
-                               align="center"
-                               label="创建时间">
-              </el-table-column>
-              <el-table-column width="80"
-                               align="center"
-                               label="状态">
+              <el-table-column align="center"
+                               width="160"
+                               label="角色">
                 <template slot-scope="scope">
-                  <span v-if="scope.row.obsoleted">作废</span>
-                  <span v-else>未作废</span>
+                  <el-button type="primary"
+                             @click="showRoleDialog(scope.row)"
+                             size="small">
+                    查看/编辑
+                  </el-button>
                 </template>
               </el-table-column>
               <el-table-column align="center"
@@ -82,7 +80,7 @@
                                label="操作">
                 <template slot-scope="scope">
                   <el-button type="primary"
-                             @click="editUser(scope.row.userId)"
+                             @click="showEditDialog(scope.row)"
                              size="small">
                     修改
                   </el-button>
@@ -111,12 +109,15 @@
         </div>
       </el-card>
     </el-row>
-    <EditDialog :user="selectedItem"
+    <EditDialog :user="selectedUser"
                 @closedialog="closeEditDialog"
                 v-if="editDialogVisable"></EditDialog>
 
     <CreateDialog @closedialog="closeCreateDialog"
                   v-if="createDialogVisable">
+    </CreateDialog>
+    <CreateDialog @closedialog="closeRoleDialog" :user="selectedUser"
+                  v-if="roleDialogVisable">
     </CreateDialog>
   </div>
 </template>
@@ -125,14 +126,16 @@
 import { BasicService } from '@/api'
 import EditDialog from './Edit'
 import CreateDialog from './Create'
+import RoleDialog from './RoleAuth'
 export default {
   components: {
-    EditDialog, CreateDialog
+    EditDialog, CreateDialog, RoleDialog
   },
   data() {
     return {
-      editDialogVisable: false,
       createDialogVisable: false,
+      editDialogVisable: false,
+      roleDialogVisable: false,
       conditionData: {
         username: ''
       },
@@ -149,13 +152,13 @@ export default {
     this.getList()
   },
   methods: {
-    getList(query) {
-      BasicService.getNumOfUsers(query || {}).then(data => {
+    getList() {
+      BasicService.getNumOfUsers(this.conditionData.username ? { name: this.conditionData.username } : {}).then(data => {
         this.total = data.data.count
-        const queryObj = query ? {
+        const queryObj = this.conditionData.username ? {
           limit: this.listQuery.limit,
           skip: this.listQuery.limit * (this.listQuery.page - 1),
-          where: query
+          where: { name: this.conditionData.username }
         } : {
           limit: this.listQuery.limit,
           skip: this.listQuery.limit * (this.listQuery.page - 1)
@@ -165,12 +168,13 @@ export default {
         })
       })
     },
-    search() {
-      this.getList({ name: this.conditionData.username })
-    },
     showEditDialog(user) {
       this.selectedUser = user
-      this.editDlialogVisable = true
+      this.editDialogVisable = true
+    },
+    showRoleDialog(user) {
+      this.selectedUser = user
+      this.roleDialogVisable = true
     },
     handleSizeChange(val) {
       this.listQuery.limit = val
@@ -194,6 +198,9 @@ export default {
         this.getList()
       }
       this.editDialogVisable = false
+    },
+    closeRoleDialog() {
+      this.roleDialogVisable = false
     },
     delUser(userid, username) {
       this.$confirm(`确认删除${username}吗?`, '提示', {
@@ -222,7 +229,7 @@ export default {
 <style scoped lang="scss">
 .user {
   padding: 20px 20px;
-  /deep/ .el-form-item {
+  .card /deep/ .el-form-item {
     margin-bottom: 0;
   }
 }

@@ -9,20 +9,36 @@
                ref="form"
                label-width="120px"
                :model="userInfo">
-        <el-form-item label="账号名">
+        <el-form-item label="人员姓名">
           <el-input v-model="userInfo.name"></el-input>
         </el-form-item>
-        <el-form-item label="电话">
+        <el-form-item label="身份证号">
+          <el-input v-model="userInfo.id_card"></el-input>
+        </el-form-item>
+        <el-form-item label="医疗机构内工号">
+          <el-input v-model="userInfo.job_code"></el-input>
+        </el-form-item>
+        <el-form-item label="科室代码">
+          <el-input v-model="userInfo.dept_code"></el-input>
+        </el-form-item>
+        <el-form-item label="人员类型">
+          <el-select v-model="userInfo.type"
+                     placeholder="请选择">
+            <el-option v-for="item in options"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="性别">
+          <el-radio v-model="userInfo.gender"
+                    :label="'1'">男</el-radio>
+          <el-radio v-model="userInfo.gender"
+                    :label="'2'">女</el-radio>
+        </el-form-item>
+        <el-form-item label="联系电话">
           <el-input v-model="userInfo.telephone"></el-input>
-        </el-form-item>
-        <el-form-item label="邮箱">
-          <el-input v-model="userInfo.email"></el-input>
-        </el-form-item>
-        <el-form-item label="人员ID">
-          <el-input v-model="userInfo.person_id"></el-input>
-        </el-form-item>
-        <el-form-item label="医疗结构ID">
-          <el-input v-model="userInfo.hosp_id"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="success"
@@ -41,7 +57,12 @@ export default {
   data() {
     return {
       dialogVisible: true,
-      userInfo: {}
+      userInfo: {},
+      options: [
+        { label: '其他', value: 0 },
+        { label: '药师', value: 1 },
+        { label: '医师', value: 2 },
+        { label: '护士', value: 3 }]
     }
   },
   props: ['user'],

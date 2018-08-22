@@ -103,13 +103,13 @@ export const asyncRouterMap = [{
     }
   },
   {
-    path: 'trial',
-    name: 'Trial',
+    path: 'statistic',
+    name: 'Statistic',
     component: () =>
-          import('@/views/monitoring-mana/Trial'),
+          import('@/views/monitoring-mana/statistic/index'),
     meta: {
       title: '审方统计',
-      icon: 'sider-trial'
+      icon: 'sider-statistic'
     }
   }
   ]

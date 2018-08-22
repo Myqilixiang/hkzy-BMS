@@ -2,3 +2,4 @@ node_modules/
 dist/
 front/
 .vscode
+package-lock.json
