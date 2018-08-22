@@ -1,6 +1,6 @@
 <template>
   <div class="edit">
-    <el-dialog title="添加用户"
+    <el-dialog title="修改角色"
                :visible.sync="dialogVisible"
                @close="closedialog"
                width="70%"
@@ -8,21 +8,12 @@
       <el-form size="small"
                ref="form"
                label-width="120px"
-               :model="userInfo">
-        <el-form-item label="账号名">
-          <el-input v-model="userInfo.name"></el-input>
+               :model="roleInfo">
+        <el-form-item label="角色名">
+          <el-input v-model="roleInfo.name"></el-input>
         </el-form-item>
-        <el-form-item label="电话">
-          <el-input v-model="userInfo.telephone"></el-input>
-        </el-form-item>
-        <el-form-item label="邮箱">
-          <el-input v-model="userInfo.email"></el-input>
-        </el-form-item>
-        <el-form-item label="人员ID">
-          <el-input v-model="userInfo.person_id"></el-input>
-        </el-form-item>
-        <el-form-item label="医疗结构ID">
-          <el-input v-model="userInfo.hosp_id"></el-input>
+        <el-form-item label="角色代码">
+          <el-input v-model="roleInfo.role_code"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="success"
@@ -41,12 +32,12 @@ export default {
   data() {
     return {
       dialogVisible: true,
-      userInfo: {}
+      roleInfo: {}
     }
   },
-  props: ['user'],
+  props: ['role'],
   mounted() {
-    this.userInfo = this.user
+    this.roleInfo = this.role
   },
   methods: {
     closedialog(msg) {
@@ -57,7 +48,7 @@ export default {
       }
     },
     submit() {
-      BasicService.updateUser(this.userInfo).then(data => {
+      BasicService.updateRole(this.roleInfo).then(data => {
         if (data.status === 200) {
           this.closedialog(true)
           this.$message({

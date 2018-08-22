@@ -1,6 +1,6 @@
 <template>
   <div class="edit">
-    <el-dialog title="添加用户"
+    <el-dialog title="修改用户"
                :visible.sync="dialogVisible"
                @close="closedialog"
                width="70%"
@@ -17,6 +17,9 @@
         </el-form-item>
         <el-form-item label="邮箱">
           <el-input v-model="userInfo.email"></el-input>
+        </el-form-item>
+        <el-form-item label="密码">
+          <el-input v-model="userInfo.password"></el-input>
         </el-form-item>
         <el-form-item label="人员ID">
           <el-input v-model="userInfo.person_id"></el-input>
@@ -47,6 +50,7 @@ export default {
   props: ['user'],
   mounted() {
     this.userInfo = this.user
+    this.userInfo.password = ''// FIXME: 数据库中没有password字段，但是rest返回信息说是必须要填
   },
   methods: {
     closedialog(msg) {

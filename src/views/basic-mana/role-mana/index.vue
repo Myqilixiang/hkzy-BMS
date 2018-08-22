@@ -11,7 +11,7 @@
                      :model="conditionData"
                      class="demo-form-inline">
               <el-form-item>
-                <el-input v-model="conditionData.username"
+                <el-input v-model="conditionData.roleName"
                           clearable
                           @clear="getList"
                           placeholder="请输入角色名"></el-input>
@@ -22,7 +22,7 @@
               </el-form-item>
               <el-form-item>
                 <el-button type="success"
-                           @click="addUser">添加用户</el-button>
+                           @click="addRole">添加角色</el-button>
               </el-form-item>
 
             </el-form>
@@ -32,6 +32,7 @@
           <el-col :span="24">
             <el-table :data="list"
                       stripe
+                      v-loading="loading"
                       border
                       style="width: 100%">
               <el-table-column prop="name"
@@ -78,7 +79,7 @@
                     修改
                   </el-button>
                   <el-button type="danger"
-                             @click="delUser(scope.row.id,scope.row.name)"
+                             @click="delRole(scope.row.id,scope.row.name)"
                              size="small">
                     删除
                   </el-button>
@@ -102,7 +103,7 @@
         </div>
       </el-card>
     </el-row>
-    <EditDialog :role="selectedUser"
+    <EditDialog :role="selectedRole"
                 @closedialog="closeEditDialog"
                 v-if="editDialogVisable"></EditDialog>
 
@@ -110,7 +111,7 @@
                   v-if="createDialogVisable">
     </CreateDialog>
     <AuthDialog @closedialog="closeRoleDialog"
-                :role="selectedUser"
+                :role="selectedRole"
                 v-if="roleDialogVisable">
     </AuthDialog>
   </div>
@@ -131,14 +132,15 @@ export default {
       editDialogVisable: false,
       roleDialogVisable: false,
       conditionData: {
-        username: ''
+        roleName: ''
       },
+      loading: true,
       total: 0,
       listQuery: {
         page: 1,
         limit: 10
       },
-      selectedUser: {},
+      selectedRole: {},
       list: []
     }
   },
@@ -147,27 +149,28 @@ export default {
   },
   methods: {
     getList() {
-      BasicService.getNumOfUsers(this.conditionData.username ? { name: this.conditionData.username } : {}).then(data => {
+      BasicService.getNumOfRole(this.conditionData.roleName ? { name: this.conditionData.roleName } : {}).then(data => {
         this.total = data.data.count
-        const queryObj = this.conditionData.username ? {
+        const queryObj = this.conditionData.roleName ? {
           limit: this.listQuery.limit,
           skip: this.listQuery.limit * (this.listQuery.page - 1),
-          where: { name: this.conditionData.username }
+          where: { name: this.conditionData.roleName }
         } : {
           limit: this.listQuery.limit,
           skip: this.listQuery.limit * (this.listQuery.page - 1)
         }
-        BasicService.getUserList(queryObj).then(data => {
+        BasicService.getRoleList(queryObj).then(data => {
+          this.loading = false
           this.list = data.data
         })
       })
     },
     showEditDialog(role) {
-      this.selectedUser = role
+      this.selectedRole = role
       this.editDialogVisable = true
     },
     showRoleDialog(role) {
-      this.selectedUser = role
+      this.selectedRole = role
       this.roleDialogVisable = true
     },
     handleSizeChange(val) {
@@ -178,7 +181,7 @@ export default {
       this.listQuery.page = val
       this.getList()
     },
-    addUser() {
+    addRole() {
       this.createDialogVisable = true
     },
     closeCreateDialog(msg) {
@@ -196,13 +199,13 @@ export default {
     closeRoleDialog() {
       this.roleDialogVisable = false
     },
-    delUser(userid, username) {
-      this.$confirm(`确认删除${username}吗?`, '提示', {
+    delRole(roleid, roleName) {
+      this.$confirm(`确认删除${roleName}吗?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        BasicService.deleteUser(userid).then(data => {
+        BasicService.deleteRole(roleid).then(data => {
           this.getList()
           this.$message({
             type: 'success',

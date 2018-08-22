@@ -32,11 +32,16 @@
           <el-col :span="24">
             <el-table :data="list"
                       stripe
+                      v-loading="loading"
                       border
                       style="width: 100%">
               <el-table-column prop="name"
                                align="center"
                                label="账号名">
+              </el-table-column>
+              <el-table-column prop="username"
+                               align="center"
+                               label="用户名">
               </el-table-column>
               <el-table-column prop="telephone"
                                align="center"
@@ -116,8 +121,9 @@
     <CreateDialog @closedialog="closeCreateDialog"
                   v-if="createDialogVisable">
     </CreateDialog>
-    <RoleDialog @closedialog="closeRoleDialog" :user="selectedUser"
-                  v-if="roleDialogVisable">
+    <RoleDialog @closedialog="closeRoleDialog"
+                :user="selectedUser"
+                v-if="roleDialogVisable">
     </RoleDialog>
   </div>
 </template>
@@ -139,6 +145,7 @@ export default {
       conditionData: {
         username: ''
       },
+      loading: true,
       total: 0,
       listQuery: {
         page: 1,
@@ -164,6 +171,7 @@ export default {
           skip: this.listQuery.limit * (this.listQuery.page - 1)
         }
         BasicService.getUserList(queryObj).then(data => {
+          this.loading = false
           this.list = data.data
         })
       })
