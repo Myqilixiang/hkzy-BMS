@@ -1,96 +1,109 @@
 <template>
   <div class="refund">
-    <el-row>
-      <el-col :span="5">
-        <el-tree :load="loadDepartment"
-                 lazy
-                 :props="defaultProps"
-                 @node-click="handleNodeClick"></el-tree>
-      </el-col>
-      <el-col :span="19">
-        <el-card>
-          <div class="clearfix"
-               slot="header">
-            <el-col :span="24">
-              <el-form :inline="true"
-                       ref="form"
-                       size="small"
-                       :model="conditionData"
-                       class="demo-form-inline">
-                <el-form-item label="ID">
-                  <el-input v-model="conditionData.refundId"></el-input>
-                </el-form-item>
-                <!-- <el-form-item lable="手机号">
-                  <el-input v-model="conditionData.telNum"></el-input>
-                </el-form-item> -->
-                <!-- <el-form-item>
-                  <el-radio v-model="conditionData.end"
-                            label="student">学生端</el-radio>
-                  <el-radio v-model="conditionData.end"
-                            label="parent">家长端</el-radio>
-                </el-form-item> -->
+    <el-card>
+      <el-row>
+        <el-col :span="5">
+          <el-tree :load="loadDepartment"
+                   lazy
+                   :props="defaultProps"
+                   @node-click="handleNodeClick"></el-tree>
+        </el-col>
+        <el-col :span="19">
+          <el-card v-if="selectedDepartment">
+            <div class="clearfix"
+                 slot="header">
+              {{selectedDepartment.name}}
+            </div>
+            <div class="clearfix">
 
-                <el-form-item>
-                  <el-button type="primary"
-                             @click="onSubmit">查询</el-button>
-                </el-form-item>
-              </el-form>
-            </el-col>
-          </div>
-          <div class="clearfix">
-            <el-col :span="24">
-              <el-table :data="list"
-                        stripe
-                        border
-                        style="width: 100%">
-                <el-table-column align="center"
-                                 label="人员类型">
-                  <template slot-scope="scope">
-                    <span v-if="scope.row.type==1">药师</span>
-                    <span v-if="scope.row.type==2">医师</span>
-                    <span v-if="scope.row.type==3">护士</span>
-                    <span v-if="scope.row.type==0">其他</span>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="dept_code"
-                                 align="center"
-                                 label="科室代码">
-                </el-table-column>
-                <el-table-column prop="name"
-                                 align="center"
-                                 label="姓名">
-                </el-table-column>
-                <el-table-column prop="gender"
-                                 align="center"
-                                 label="性别">
-                </el-table-column>
-                <el-table-column prop="telephone"
-                                 align="center"
-                                 label="联系电话">
-                </el-table-column>
-                <el-table-column prop="title"
-                                 align="center"
-                                 label="职务">
-                </el-table-column>
-              </el-table>
-            </el-col>
-            <el-col :span="24">
-              <div class="pagination-container">
-                <el-pagination background
-                               @size-change="handleSizeChange"
-                               @current-change="handleCurrentChange"
-                               :current-page="listQuery.page"
-                               :page-sizes="[5,10,15, 20]"
-                               :page-size="listQuery.limit"
-                               layout="total, sizes, prev, pager, next, jumper"
-                               :total="total">
-                </el-pagination>
-              </div>
-            </el-col>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
+            </div>
+          </el-card>
+          <el-card>
+            <div class="clearfix"
+                 slot="header">
+              <el-col :span="24">
+                <el-form :inline="true"
+                         ref="form"
+                         size="small"
+                         :model="conditionData"
+                         class="demo-form-inline">
+                  <el-form-item label="ID">
+                    <el-input v-model="conditionData.refundId"></el-input>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="primary"
+                               @click="onSubmit">查询</el-button>
+                  </el-form-item>
+                </el-form>
+              </el-col>
+            </div>
+            <div class="clearfix">
+              <el-col :span="24">
+                <el-table :data="list"
+                          stripe
+                          border
+                          style="width: 100%">
+                  <el-table-column prop="name"
+                                   align="center"
+                                   label="姓名">
+                  </el-table-column>
+                  <el-table-column align="center"
+                                   label="性别">
+                    <template slot-scope="scope">
+                      <span v-if="scope.row.gender==1">男</span>
+                      <span v-if="scope.row.gender==2">女</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="title"
+                                   align="center"
+                                   label="职务">
+                  </el-table-column>
+                  <el-table-column align="center"
+                                   label="人员类型">
+                    <template slot-scope="scope">
+                      <span v-if="scope.row.type==1">药师</span>
+                      <span v-if="scope.row.type==2">医师</span>
+                      <span v-if="scope.row.type==3">护士</span>
+                      <span v-if="scope.row.type==0">其他</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="dept_code"
+                                   align="center"
+                                   label="科室代码">
+                  </el-table-column>
+                  <el-table-column prop="telephone"
+                                   align="center"
+                                   label="联系电话">
+                  </el-table-column>
+                  <el-table-column align="center"
+                                   label="操作">
+                    <template slot-scope="scope">
+                      <el-button type="warning"
+                                 @click="showEditDialog(scope.row)">编辑</el-button>
+                      <el-button type="danger"
+                                 @click="delPerson(scope.row)">删除</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </el-col>
+            </div>
+          </el-card>
+          <el-col :span="24">
+            <div class="pagination-container">
+              <el-pagination background
+                             @size-change="handleSizeChange"
+                             @current-change="handleCurrentChange"
+                             :current-page="listQuery.page"
+                             :page-sizes="[5,10,15, 20]"
+                             :page-size="listQuery.limit"
+                             layout="total, sizes, prev, pager, next, jumper"
+                             :total="total">
+              </el-pagination>
+            </div>
+          </el-col>
+        </el-col>
+      </el-row>
+    </el-card>
   </div>
 </template>
 

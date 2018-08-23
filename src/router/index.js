@@ -96,7 +96,7 @@ export const asyncRouterMap = [{
     path: 'dashboard',
     name: 'monitoringDashboard',
     component: () =>
-          import('@/views/monitoring-mana/Dashboard'),
+          import('@/views/monitoring-mana/dashboard/index'),
     meta: {
       title: 'Dashboard',
       icon: 'sider-dashboard'

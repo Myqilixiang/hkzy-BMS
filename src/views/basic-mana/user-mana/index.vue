@@ -39,10 +39,6 @@
                                align="center"
                                label="账号名">
               </el-table-column>
-              <el-table-column prop="username"
-                               align="center"
-                               label="用户名">
-              </el-table-column>
               <el-table-column prop="telephone"
                                align="center"
                                label="电话">
@@ -84,7 +80,7 @@
                                width="160"
                                label="操作">
                 <template slot-scope="scope">
-                  <el-button type="primary"
+                  <el-button type="warning"
                              @click="showEditDialog(scope.row)"
                              size="small">
                     修改

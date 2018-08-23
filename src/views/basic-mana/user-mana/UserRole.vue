@@ -45,7 +45,7 @@ export default {
     }
   },
   mounted() {
-    BasicService.getRoleList().then(data => {
+    BasicService.getRoleList({}).then(data => {
       if (data.status === 200) {
         this.roleList = data.data
         BasicService.getRolesOfSelectedUser(this.user.id).then(data => {
@@ -69,16 +69,8 @@ export default {
         this.$emit('closedialog')
       }
     },
-    submit() {
-      // BasicService.createUser(this.userInfo).then(data => {
-      //   if (data.status === 200) {
-      //     this.closedialog(true)
-      //     this.$message({
-      //       type: 'success',
-      //       message: '新增成功!'
-      //     })
-      //   }
-      // })
+    async submit() {
+      // 选中的所有角色
       const selectedRoles = this.checkList.map(item => {
         for (let i = 0; i < this.roleList.length; i++) {
           if (this.roleList[i].role_code === item) {
@@ -86,24 +78,48 @@ export default {
           }
         }
       })
+      // 需要添加的角色
+      const addRoles = selectedRoles.filter(item => {
+        return this.originRoles.indexOf(item) === -1
+      })
+      // 需要删除的关系
       const deleteRoles = this.originRoles.filter(item => {
         return selectedRoles.indexOf(item) === -1
       })
-      Promise.all([
-        deleteRoles.map(item => {
-          BasicService.getSysUserRoleMapsId({
-            where:
-              {
-                role_id: item,
-                user_id: this.user.id
-              }
-          })
+      let sysUserRoleMapsIdToDelete = []
+      // 获取需要删除的用户角色数据id
+      for (let i = 0; i < deleteRoles.length; i++) {
+        sysUserRoleMapsIdToDelete.push(await BasicService.getSysUserRoleMapsId({
+          where:
+            {
+              role_id: deleteRoles[i],
+              user_id: this.user.id
+            }
+        }))
+      }
+      sysUserRoleMapsIdToDelete = sysUserRoleMapsIdToDelete.map(item => item.data[0].id)
+      // 删除用户角色关联条目
+      for (let i = 0; i < sysUserRoleMapsIdToDelete.length; i++) {
+        await BasicService.delRoleOfUser(sysUserRoleMapsIdToDelete[i])
+      }
+      // 添加选中的条目
+      for (let i = 0; i < addRoles.length; i++) {
+        await BasicService.addRoleForUser({
+          'role_id': addRoles[i],
+          'created_at': 0,
+          'updated_at': 0,
+          'created_by': '',
+          'updated_by': '',
+          'obsoleted': false,
+          'sort_value': 1,
+          'user_id': this.user.id
         })
-      ]).then(data => {
-        console.log(data)
+      }
+      this.$message({
+        type: 'success',
+        message: '修改成功!'
       })
-
-      // BasicService.getSysUserRoleMapsId({ where: { role_id }})
+      this.closedialog()
     },
     handleSelectionChange(val) {
       this.multipleSelection = val

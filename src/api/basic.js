@@ -67,10 +67,10 @@ class BasicService {
       }
     })
   }
-  delRoleOfUser(data) {
+  delRoleOfUser(id) {
     return request({
-      url: `/SysUserRoleMaps`,
-      method: 'post'
+      url: `/SysUserRoleMaps/${id}`,
+      method: 'delete'
     })
   }
   /**

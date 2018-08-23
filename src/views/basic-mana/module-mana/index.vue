@@ -81,7 +81,7 @@
                                width="160"
                                label="操作">
                 <template slot-scope="scope">
-                  <el-button type="primary"
+                  <el-button type="warning"
                              @click="showEditDialog(scope.row)"
                              size="small">
                     修改

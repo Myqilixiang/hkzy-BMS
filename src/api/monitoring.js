@@ -1,13 +1,19 @@
 import request from '@/utils/request'
 class MonitoringService {
-  login(username, password) {
-    // TODO : anshizhushi
+  /**
+   *获取 每日处方按药品类型统计 列表
+   *
+   * @param {*} username
+   * @param {*} password
+   * @returns
+   * @memberof MonitoringService
+   */
+  getDailyPrescriptionMedicineStatistics(filter) {
     return request({
-      url: '/user/login',
-      method: 'post',
-      data: {
-        username,
-        password
+      url: '/DailyPrescriptionMedicineStatistics',
+      method: 'get',
+      params: {
+        filter
       }
     })
   }
