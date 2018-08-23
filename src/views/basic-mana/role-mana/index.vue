@@ -110,10 +110,10 @@
     <CreateDialog @closedialog="closeCreateDialog"
                   v-if="createDialogVisable">
     </CreateDialog>
-    <AuthDialog @closedialog="closeRoleDialog"
+    <RoleModule @closedialog="closeRoleDialog"
                 :role="selectedRole"
                 v-if="roleDialogVisable">
-    </AuthDialog>
+    </RoleModule>
   </div>
 </template>
 
@@ -121,10 +121,10 @@
 import { BasicService } from '@/api'
 import EditDialog from './Edit'
 import CreateDialog from './Create'
-import AuthDialog from './RoleAuth'
+import RoleModule from './RoleModule'
 export default {
   components: {
-    EditDialog, CreateDialog, AuthDialog
+    EditDialog, CreateDialog, RoleModule
   },
   data() {
     return {

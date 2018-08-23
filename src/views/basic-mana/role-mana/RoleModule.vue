@@ -1,5 +1,5 @@
 <template>
-  <div class="role">
+  <div class="module">
     <el-dialog title="编辑权限"
                :visible.sync="dialogVisible"
                @close="closedialog"
@@ -7,9 +7,9 @@
                center>
       <el-checkbox-group v-model="checkList">
         <el-checkbox border
-                     v-for="item in roleList"
+                     v-for="item in moduleList"
                      :key="item.id"
-                     :label="item.role_code">{{item.name}}</el-checkbox>
+                     :label="item.name">{{item.name}}</el-checkbox>
       </el-checkbox-group>
       <el-button @click="submit"
                  type="primary">提交</el-button>
@@ -22,12 +22,12 @@
 import { BasicService } from '@/api'
 
 export default {
-  props: ['user'],
+  props: ['role'],
   data() {
     return {
       dialogVisible: true,
       checkList: [],
-      roleList: [],
+      moduleList: [],
       originRoles: [],
       userInfo: {
         'name': '',
@@ -45,13 +45,13 @@ export default {
     }
   },
   mounted() {
-    BasicService.getRoleList({}).then(data => {
+    BasicService.getModuleList({}).then(data => {
       if (data.status === 200) {
-        this.roleList = data.data
-        BasicService.getRolesOfSelectedUser(this.user.id).then(data => {
+        this.moduleList = data.data
+        BasicService.getModulesOfSelectedRole(this.role.id).then(data => {
           if (data.status === 200) {
             this.checkList = data.data.map(item => {
-              return item.role_code
+              return item.name
             })
             this.originRoles = data.data.map(item => {
               return item.id
@@ -70,49 +70,49 @@ export default {
       }
     },
     async submit() {
-      // 选中的所有角色
-      const selectedRoles = this.checkList.map(item => {
-        for (let i = 0; i < this.roleList.length; i++) {
-          if (this.roleList[i].role_code === item) {
-            return this.roleList[i].id
+      // 选中的所有模块
+      const selectedModules = this.checkList.map(item => {
+        for (let i = 0; i < this.moduleList.length; i++) {
+          if (this.moduleList[i].name === item) {
+            return this.moduleList[i].id
           }
         }
       })
-      // 需要添加的角色
-      const addRoles = selectedRoles.filter(item => {
+      // 需要添加的模块
+      const addModules = selectedModules.filter(item => {
         return this.originRoles.indexOf(item) === -1
       })
       // 需要删除的关系
-      const deleteRoles = this.originRoles.filter(item => {
-        return selectedRoles.indexOf(item) === -1
+      const deleteModules = this.originRoles.filter(item => {
+        return selectedModules.indexOf(item) === -1
       })
-      let sysUserRoleMapsIdToDelete = []
-      // 获取需要删除的用户角色数据id
-      for (let i = 0; i < deleteRoles.length; i++) {
-        sysUserRoleMapsIdToDelete.push(await BasicService.getSysUserRoleMapsId({
+      let sysRoleModuleMapsIdToDelete = []
+      // 获取需要删除的角色模块数据id
+      for (let i = 0; i < deleteModules.length; i++) {
+        sysRoleModuleMapsIdToDelete.push(await BasicService.getSysRoleModuleMapsId({
           where:
             {
-              role_id: deleteRoles[i],
-              user_id: this.user.id
+              module_id: deleteModules[i],
+              role_id: this.role.id
             }
         }))
       }
-      sysUserRoleMapsIdToDelete = sysUserRoleMapsIdToDelete.map(item => item.data[0].id)
-      // 删除用户角色关联条目
-      for (let i = 0; i < sysUserRoleMapsIdToDelete.length; i++) {
-        await BasicService.delRoleOfUser(sysUserRoleMapsIdToDelete[i])
+      sysRoleModuleMapsIdToDelete = sysRoleModuleMapsIdToDelete.map(item => item.data[0].id)
+      // 删除角色模块关联条目
+      for (let i = 0; i < sysRoleModuleMapsIdToDelete.length; i++) {
+        await BasicService.delModuleOfRole(sysRoleModuleMapsIdToDelete[i])
       }
       // 添加选中的条目
-      for (let i = 0; i < addRoles.length; i++) {
-        await BasicService.addRoleForUser({
-          'role_id': addRoles[i],
+      for (let i = 0; i < addModules.length; i++) {
+        await BasicService.addModuleForRole({
+          'role_id': this.role.id,
+          'module_id': addModules[i],
           'created_at': 0,
           'updated_at': 0,
           'created_by': '',
           'updated_by': '',
           'obsoleted': false,
-          'sort_value': 1,
-          'user_id': this.user.id
+          'sort_value': 1
         })
       }
       this.$message({
@@ -126,7 +126,7 @@ export default {
 </script>
 
 <style>
-.role .el-dialog__body {
+.module .el-dialog__body {
   max-height: 70vh;
   overflow: scroll;
 }

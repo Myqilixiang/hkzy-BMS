@@ -116,7 +116,28 @@ class BasicService {
       method: 'delete'
     })
   }
-
+  getSysRoleModuleMapsId(query) {
+    return request({
+      url: `/SysRoleModuleMaps`,
+      method: 'get',
+      params: {
+        filter: query
+      }
+    })
+  }
+  delModuleOfRole(id) {
+    return request({
+      url: `/SysRoleModuleMaps/${id}`,
+      method: 'delete'
+    })
+  }
+  addModuleForRole(data) {
+    return request({
+      url: `/SysRoleModuleMaps`,
+      method: 'post',
+      data: data
+    })
+  }
   /**
    * module
    *
@@ -160,6 +181,12 @@ class BasicService {
       url: `/Modules`,
       method: 'put',
       data: module
+    })
+  }
+  getModulesOfSelectedRole(id) {
+    return request({
+      url: `/SysRoles/${id}/modules`,
+      method: 'get'
     })
   }
 }

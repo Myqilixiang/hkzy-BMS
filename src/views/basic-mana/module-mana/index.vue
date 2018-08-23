@@ -68,17 +68,6 @@
               </el-table-column>
               <el-table-column align="center"
                                width="160"
-                               label="权限">
-                <template slot-scope="scope">
-                  <el-button type="primary"
-                             @click="showRoleDialog(scope.row)"
-                             size="small">
-                    查看/编辑
-                  </el-button>
-                </template>
-              </el-table-column>
-              <el-table-column align="center"
-                               width="160"
                                label="操作">
                 <template slot-scope="scope">
                   <el-button type="warning"
