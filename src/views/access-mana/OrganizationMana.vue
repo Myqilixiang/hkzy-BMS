@@ -160,9 +160,7 @@ export default {
 
     },
     loadDepartment(node, resolve) {
-      console.log(node)
       if (node.level === 0) {
-        console.log(node)
         AccessService.getHospitalsList({}).then(data => {
           const tempdata = data.data
           tempdata.leaf = false

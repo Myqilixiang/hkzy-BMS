@@ -10,16 +10,13 @@
                label-width="120px"
                :model="userInfo">
         <el-form-item label="账号名">
-          <el-input v-model="userInfo.name"></el-input>
-        </el-form-item>
-        <el-form-item label="用户名">
           <el-input v-model="userInfo.username"></el-input>
         </el-form-item>
         <el-form-item label="电话">
           <el-input v-model="userInfo.telephone"></el-input>
         </el-form-item>
-        <el-form-item label="邮箱">
-          <el-input v-model="userInfo.email"></el-input>
+        <el-form-item label="微信">
+          <el-input v-model="userInfo.wx_open_id"></el-input>
         </el-form-item>
         <el-form-item label="人员ID">
           <el-input v-model="userInfo.person_id"></el-input>
@@ -52,9 +49,8 @@ export default {
         'name': '',
         'status': '1',
         'telephone': '',
-        'email': '',
         'emailVerified': 'string',
-        'wx_open_id': 'string',
+        'wx_open_id': '',
         'person_id': '',
         'hosp_id': '',
         'realm': 'string',

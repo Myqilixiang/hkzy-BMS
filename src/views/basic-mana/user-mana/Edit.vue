@@ -10,13 +10,10 @@
                label-width="120px"
                :model="userInfo">
         <el-form-item label="账号名">
-          <el-input v-model="userInfo.name"></el-input>
+          <el-input v-model="userInfo.username"></el-input>
         </el-form-item>
         <el-form-item label="电话">
           <el-input v-model="userInfo.telephone"></el-input>
-        </el-form-item>
-        <el-form-item label="邮箱">
-          <el-input v-model="userInfo.email"></el-input>
         </el-form-item>
         <el-form-item label="密码">
           <el-input v-model="userInfo.password"></el-input>

@@ -73,7 +73,6 @@ export default {
       } : {}
       AccessService.getHospitalsList(queryObject).then(data => {
         this.list = data.data
-        console.log(this.list)
       })
     },
     createMedicalInstitution() {

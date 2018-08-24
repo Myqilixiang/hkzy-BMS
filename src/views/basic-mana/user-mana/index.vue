@@ -14,7 +14,7 @@
                 <el-input v-model="conditionData.username"
                           clearable
                           @clear="getList"
-                          placeholder="请输入账号名 "></el-input>
+                          placeholder="请输入账号名"></el-input>
               </el-form-item>
               <el-form-item>
                 <el-button type="primary"
@@ -35,7 +35,7 @@
                       v-loading="loading"
                       border
                       style="width: 100%">
-              <el-table-column prop="name"
+              <el-table-column prop="username"
                                align="center"
                                label="账号名">
               </el-table-column>
@@ -53,13 +53,9 @@
                           v-else>异常</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="email"
+              <el-table-column prop="wx_open_id"
                                align="center"
-                               label="邮箱">
-              </el-table-column>
-              <el-table-column prop="person_id"
-                               align="center"
-                               label="ID">
+                               label="微信">
               </el-table-column>
               <el-table-column prop="hosp_id"
                                align="center"
@@ -86,7 +82,7 @@
                     修改
                   </el-button>
                   <el-button type="danger"
-                             @click="delUser(scope.row.id,scope.row.name)"
+                             @click="delUser(scope.row.id,scope.row.username)"
                              size="small">
                     删除
                   </el-button>
@@ -156,12 +152,12 @@ export default {
   },
   methods: {
     getList() {
-      BasicService.getNumOfUsers(this.conditionData.username ? { name: this.conditionData.username } : {}).then(data => {
+      BasicService.getNumOfUsers(this.conditionData.username ? { username: this.conditionData.username } : {}).then(data => {
         this.total = data.data.count
         const queryObj = this.conditionData.username ? {
           limit: this.listQuery.limit,
           skip: this.listQuery.limit * (this.listQuery.page - 1),
-          where: { name: this.conditionData.username }
+          where: { username: this.conditionData.username }
         } : {
           limit: this.listQuery.limit,
           skip: this.listQuery.limit * (this.listQuery.page - 1)
