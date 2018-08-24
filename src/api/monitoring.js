@@ -8,12 +8,12 @@ class MonitoringService {
    * @returns
    * @memberof MonitoringService
    */
-  getDailyPrescriptionMedicineStatistics(filter) {
+  getDailyPrescriptionMedicineStatistics(query) {
     return request({
       url: '/DailyPrescriptionMedicineStatistics',
       method: 'get',
       params: {
-        filter
+        filter: JSON.stringify(query)
       }
     })
   }

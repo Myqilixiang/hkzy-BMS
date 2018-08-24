@@ -1,5 +1,32 @@
 import request from '@/utils/request'
 class AccessService {
+  /**
+   *medical institution
+   *
+   * @param {*} data
+   * @returns
+   * @memberof AccessService
+   */
+  updateInstitution(data) {
+    return request({
+      url: '/Hospitals',
+      method: 'put',
+      data: data
+    })
+  }
+  createInstitution(data) {
+    return request({
+      url: '/Hospitals',
+      method: 'post',
+      data: data
+    })
+  }
+  deleteInstitution(id) {
+    return request({
+      url: `/Hospitals/${id}`,
+      method: 'delete'
+    })
+  }
   getHospitalsNum(query) {
     return request({
       url: '/Hospitals/count',
