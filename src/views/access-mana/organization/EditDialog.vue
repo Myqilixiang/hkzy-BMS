@@ -1,9 +1,9 @@
 <template>
-  <div class="create">
-    <el-dialog title="添加用户"
+  <div class="edit">
+    <el-dialog title="编辑用户"
                :visible.sync="dialogVisible"
                @close="closedialog"
-               width="70%"
+               width="50%"
                center>
       <el-form size="small"
                ref="form"
@@ -52,42 +52,22 @@
 </template>
 
 <script>
-import { BasicService } from '@/api'
-
+import { AccessService } from '@/api'
 export default {
   data() {
     return {
       dialogVisible: true,
-      userInfo: {
-        'type': 1,
-        'name': '',
-        'job_code': '',
-        'id_card': '',
-        'occupation_no': '',
-        'level': '',
-        'sign': '',
-        'dept_code': '',
-        'gender': '1',
-        'telephone': '',
-        'birthday': 0,
-        'title': '',
-        'pydm': 'string',
-        'routing_key': 'string',
-        'wx_open_id': 'string',
-        'created_at': 0,
-        'updated_at': 0,
-        'created_by': 'string',
-        'updated_by': 'string',
-        'obsoleted': false,
-        'sort_value': 1,
-        'hosp_id': 'string'
-      },
+      userInfo: {},
       options: [
         { label: '其他', value: 0 },
         { label: '药师', value: 1 },
         { label: '医师', value: 2 },
         { label: '护士', value: 3 }]
     }
+  },
+  props: ['people'],
+  mounted() {
+    this.userInfo = this.people
   },
   methods: {
     closedialog(msg) {
@@ -98,7 +78,8 @@ export default {
       }
     },
     submit() {
-      BasicService.createUser(this.userInfo).then(data => {
+      AccessService.updateUser(this.userInfo).then(data => {
+        debugger
         if (data.status === 200) {
           this.closedialog(true)
           this.$message({
@@ -107,16 +88,13 @@ export default {
           })
         }
       })
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val
     }
   }
 }
 </script>
 
 <style>
-.create .el-dialog__body {
+.edit .el-dialog__body {
   max-height: 70vh;
   overflow: scroll;
 }

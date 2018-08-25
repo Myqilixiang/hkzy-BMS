@@ -1,9 +1,9 @@
 <template>
-  <div class="edit">
+  <div class="create">
     <el-dialog title="添加用户"
                :visible.sync="dialogVisible"
                @close="closedialog"
-               width="70%"
+               width="50%"
                center>
       <el-form size="small"
                ref="form"
@@ -52,22 +52,42 @@
 </template>
 
 <script>
-import { BasicService } from '@/api'
+import { AccessService } from '@/api'
+
 export default {
   data() {
     return {
       dialogVisible: true,
-      userInfo: {},
+      userInfo: {
+        'type': 1,
+        'name': '',
+        'job_code': '',
+        'id_card': '',
+        'occupation_no': '',
+        'level': '',
+        'sign': '',
+        'dept_code': '',
+        'gender': '1',
+        'telephone': '',
+        'birthday': 0,
+        'title': '',
+        'pydm': 'string',
+        'routing_key': 'string',
+        'wx_open_id': 'string',
+        'created_at': 0,
+        'updated_at': 0,
+        'created_by': 'string',
+        'updated_by': 'string',
+        'obsoleted': false,
+        'sort_value': 1,
+        'hosp_id': 'string'
+      },
       options: [
         { label: '其他', value: 0 },
         { label: '药师', value: 1 },
         { label: '医师', value: 2 },
         { label: '护士', value: 3 }]
     }
-  },
-  props: ['user'],
-  mounted() {
-    this.userInfo = this.user
   },
   methods: {
     closedialog(msg) {
@@ -78,7 +98,7 @@ export default {
       }
     },
     submit() {
-      BasicService.updateUser(this.userInfo).then(data => {
+      AccessService.createUser(this.userInfo).then(data => {
         if (data.status === 200) {
           this.closedialog(true)
           this.$message({
@@ -96,7 +116,7 @@ export default {
 </script>
 
 <style>
-.edit .el-dialog__body {
+.create .el-dialog__body {
   max-height: 70vh;
   overflow: scroll;
 }

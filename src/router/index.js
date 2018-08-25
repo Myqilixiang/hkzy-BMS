@@ -63,7 +63,7 @@ export const asyncRouterMap = [{
     path: 'medical-institution-mana',
     name: 'MedicalInstitutionMana',
     component: () =>
-          import('@/views/access-mana/MedicalInstitutionMana'),
+          import('@/views/access-mana/medical/MedicalInstitutionMana'),
     meta: {
       title: '医疗机构接入管理',
       icon: 'sider-medical'
@@ -73,7 +73,7 @@ export const asyncRouterMap = [{
     path: 'organization-mana',
     name: 'OrganizationMana',
     component: () =>
-          import('@/views/access-mana/OrganizationMana'),
+          import('@/views/access-mana/organization/OrganizationMana'),
     meta: {
       title: '组织机构管理',
       icon: 'sider-organization'

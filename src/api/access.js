@@ -45,6 +45,33 @@ class AccessService {
       }
     })
   }
+  createUser(userInfo) {
+    return request({
+      url: `/Persons`,
+      method: 'post',
+      data: userInfo
+    })
+  }
+  updateUser(userInfo) {
+    return request({
+      url: `/Persons`,
+      method: 'put',
+      data: userInfo
+    })
+  }
+  deleteUser(id) {
+    return request({
+      url: `/Persons/${id}`,
+      method: 'delete'
+    })
+  }
+  /**
+   *department
+   *
+   * @param {*} query
+   * @returns
+   * @memberof AccessService
+   */
   getDepartmentsOfSelectedHospital(query) {
     return request({
       url: '/Departments',

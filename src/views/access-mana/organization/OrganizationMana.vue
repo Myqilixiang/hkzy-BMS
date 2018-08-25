@@ -1,6 +1,6 @@
 <template>
   <div class="refund">
-    <el-card>
+    <el-card class="card">
       <el-row>
         <el-col :span="5">
           <el-tree :load="loadDepartment"
@@ -27,12 +27,17 @@
                          size="small"
                          :model="conditionData"
                          class="demo-form-inline">
-                  <el-form-item label="ID">
-                    <el-input v-model="conditionData.refundId"></el-input>
+                  <el-form-item label="姓名">
+                    <el-input v-model="conditionData.username"
+                              clearable
+                              placeholder="请输入姓名 "
+                              @clear="getList"></el-input>
                   </el-form-item>
                   <el-form-item>
                     <el-button type="primary"
-                               @click="onSubmit">查询</el-button>
+                               @click="getList">查询</el-button>
+                    <el-button type="success"
+                               @click="addUser">添加岗位</el-button>
                   </el-form-item>
                 </el-form>
               </el-col>
@@ -42,6 +47,7 @@
                 <el-table :data="list"
                           stripe
                           border
+                          v-loading="loading"
                           style="width: 100%">
                   <el-table-column prop="name"
                                    align="center"
@@ -76,11 +82,14 @@
                                    label="联系电话">
                   </el-table-column>
                   <el-table-column align="center"
+                                   width="200"
                                    label="操作">
                     <template slot-scope="scope">
                       <el-button type="warning"
+                                 size="small"
                                  @click="showEditDialog(scope.row)">编辑</el-button>
                       <el-button type="danger"
+                                 size="small"
                                  @click="delPerson(scope.row)">删除</el-button>
                     </template>
                   </el-table-column>
@@ -104,22 +113,34 @@
         </el-col>
       </el-row>
     </el-card>
+    <CreateDialog @closedialog="closeCreateDialog"
+                  v-if="createDialogVisable">
+    </CreateDialog>
+    <EditDialog :people="selectedItem"
+                @closedialog="closeEditDialog"
+                v-if="editDialogVisable"></EditDialog>
   </div>
 </template>
 
 <script>
 import { AccessService } from '@/api'
+import EditDialog from './EditDialog'
+import CreateDialog from './Create'
 export default {
+  components: {
+    EditDialog, CreateDialog
+  },
   data() {
     return {
+      loading: false,
+      editDialogVisable: '',
+      createDialogVisable: '',
       defaultProps: {
         label: 'name',
         leaf: 'leaf'
       },
       conditionData: {
-        refundId: '',
-        telNum: '',
-        end: ''
+        username: ''
       },
       total: 0,
       listQuery: {
@@ -129,6 +150,7 @@ export default {
       list: [
 
       ],
+      selectedItem: {},
       selectedDepartment: ''
     }
   },
@@ -139,26 +161,40 @@ export default {
   },
   methods: {
     getList() {
-      AccessService.getPersonNumOfSelectedDepartments({
-        hosp_id: this.selectedDepartment.hosp_id,
-        dept_code: this.selectedDepartment.dept_code
-      }).then(data => {
-        this.total = data.data.count
+      this.loading = true
+      if (!this.conditionData.username) {
+        AccessService.getPersonNumOfSelectedDepartments({
+          hosp_id: this.selectedDepartment.hosp_id,
+          dept_code: this.selectedDepartment.dept_code
+        }).then(data => {
+          this.total = data.data.count
+          AccessService.getPersonOfSelectedDepartments({
+            where: {
+              hosp_id: this.selectedDepartment.hosp_id,
+              dept_code: this.selectedDepartment.dept_code
+            },
+            limit: this.listQuery.limit,
+            skip: this.listQuery.limit * (this.listQuery.page - 1)
+          }).then(data => {
+            this.loading = false
+            this.list = data.data
+          })
+        })
+      } else {
         AccessService.getPersonOfSelectedDepartments({
           where: {
             hosp_id: this.selectedDepartment.hosp_id,
-            dept_code: this.selectedDepartment.dept_code
-          },
-          limit: this.listQuery.limit,
-          skip: this.listQuery.limit * (this.listQuery.page - 1)
+            dept_code: this.selectedDepartment.dept_code,
+            name: this.conditionData.username
+          }
         }).then(data => {
+          this.loading = false
+          this.total = data.data.length
           this.list = data.data
         })
-      })
+      }
     },
-    onSubmit() {
 
-    },
     loadDepartment(node, resolve) {
       if (node.level === 0) {
         AccessService.getHospitalsList({}).then(data => {
@@ -177,7 +213,11 @@ export default {
           resolve(tempdata)
         })
       } else {
-        AccessService.getChildrenOfSelectedDepartment({ where: { parent_id: node.data.id }}).then(data => {
+        AccessService.getChildrenOfSelectedDepartment({
+          where: {
+            parent_id: node.data.id
+          }
+        }).then(data => {
           const tempdata = data.data.map(item => {
             const tempItem = item
             tempItem.name = item.dept_name
@@ -187,6 +227,25 @@ export default {
           resolve(tempdata)
         })
       }
+    },
+    closeCreateDialog(msg) {
+      if (msg) {
+        this.getList()
+      }
+      this.createDialogVisable = false
+    },
+    closeEditDialog(msg) {
+      if (msg) {
+        this.getList()
+      }
+      this.editDialogVisable = false
+    },
+    addUser() {
+      this.createDialogVisable = true
+    },
+    showEditDialog(row) {
+      this.selectedItem = row
+      this.editDialogVisable = true
     },
     handleSizeChange(val) {
       this.listQuery.limit = val
@@ -199,6 +258,17 @@ export default {
     handleNodeClick(val) {
       this.selectedDepartment = val
       this.getList()
+    },
+    delPerson(row) {
+      AccessService.deleteUser(row.id).then(data => {
+        if (data.status) {
+          this.getList()
+          this.$message({
+            type: 'success',
+            message: '提交成功!'
+          })
+        }
+      })
     }
   }
 }
@@ -207,7 +277,7 @@ export default {
 <style scoped lang="scss">
 .refund {
   padding: 20px 20px;
-  /deep/ .el-form-item {
+  .card /deep/ .el-form-item {
     margin-bottom: 0;
   }
 }
